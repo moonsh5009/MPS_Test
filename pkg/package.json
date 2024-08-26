@@ -1,0 +1,14 @@
+{
+  "name": "mps_app",
+  "version": "0.1.0",
+  "files": [
+    "mps_app_bg.wasm",
+    "mps_app.js",
+    "mps_app.d.ts"
+  ],
+  "module": "mps_app.js",
+  "types": "mps_app.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

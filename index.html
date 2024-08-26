@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Learn WGPU</title>
+    <style>
+        canvas
+        {
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body id="wasm-example">
+    <script type="module">
+        import init, { App } from "./pkg/mps_app.js";
+        
+        await init();
+
+        const app = new App();
+        await app.Initalize();
+
+        const canvas = document.getElementById("my-canvas");
+        let lastX = 0;
+        let lastY = 0;
+
+        document.addEventListener('keydown', (event) =>
+        {
+            app.OnKeyDownWasm(event.code);
+            console.log(event.code);
+        });
+
+        document.addEventListener('keyup', (event) =>
+        {
+            app.OnKeyUpWasm(event.code);
+            console.log(event.code);
+        });
+
+        window.addEventListener('pointerdown', (event) =>
+        {
+            app.OnMouseDown(event.button);
+
+            lastX = event.clientX; 
+            lastY = event.clientY;
+        });
+
+        window.addEventListener('pointerup', (event) =>
+        {
+            app.OnMouseUp(event.button);
+
+            lastX = event.clientX; 
+            lastY = event.clientY;
+        });
+
+        window.addEventListener('pointermove', (event) =>
+        {
+            const deltaX = event.clientX - lastX;
+            const deltaY = event.clientY - lastY;
+
+            app.OnMouseMotion(deltaX, deltaY);
+            console.log(deltaX, deltaY);
+
+            lastX = event.clientX; 
+            lastY = event.clientY;
+        });
+
+        window.addEventListener('wheel', (event) =>
+        {
+            app.OnMouseWheel(event.deltaX, -event.deltaY);
+        });
+
+        window.addEventListener("resize", () => 
+        {
+            resizeCanvas(canvas);
+        });
+
+        window.addEventListener('dblclick', () => toFullScreen(canvas));
+
+        async function Draw()
+        {
+            await app.OnRedraw();
+            requestAnimationFrame(Draw);
+        }
+
+        function resizeCanvas(canvas)
+        {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            app.OnResize(canvas.width, canvas.height);
+            console.log(canvas.width, canvas.height);
+        }
+
+        function toFullScreen(canvas)
+        {
+            const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+
+            if(!fullscreenElement)
+            {
+                if(canvas.requestFullscreen)
+                {
+                    canvas.requestFullscreen()
+                }
+                else if(canvas.webkitRequestFullscreen)
+                {
+                    canvas.webkitRequestFullscreen()
+                }
+            }
+            else
+            {
+                if(document.exitFullscreen)
+                {
+                    document.exitFullscreen()
+                }
+                else if(document.webkitExitFullscreen)
+                {
+                    document.webkitExitFullscreen()
+                }
+            }
+        }
+
+        resizeCanvas(canvas);
+        requestAnimationFrame(Draw);
+    </script>
+</body>
+
+</html>

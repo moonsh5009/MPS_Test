@@ -1,0 +1,17 @@
+*
+{
+    margin: 10;
+    padding: 10;
+}
+.my-canvas
+{
+    position: fixed;
+    top: 10;
+    left: 10;
+    outline: none;
+}
+html,
+body
+{
+    overflow: hidden;
+}
